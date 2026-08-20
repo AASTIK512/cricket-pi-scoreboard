@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+*.pyc
+newsapi.env
+.DS_Store
