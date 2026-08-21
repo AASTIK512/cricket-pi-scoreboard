@@ -1,0 +1,38 @@
+name: Build portable Windows app
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'app.py'
+      - 'requirements.txt'
+      - 'windows/**'
+      - '.github/workflows/build-windows.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt pyinstaller
+      - name: Build portable executable
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name CricketScores app.py
+      - name: Add user configuration template
+        shell: pwsh
+        run: |
+          "NEWSAPI_AI_KEY=put-your-key-here" | Out-File -Encoding utf8 dist/newsapi.env.example
+          Copy-Item windows/README-Windows.txt dist/README-Windows.txt
+      - name: Package portable folder
+        shell: pwsh
+        run: Compress-Archive -Path dist/CricketScores.exe,dist/newsapi.env.example,dist/README-Windows.txt -DestinationPath CricketScores-Windows-Portable.zip
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CricketScores-Windows-Portable
+          path: CricketScores-Windows-Portable.zip

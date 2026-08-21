@@ -56,3 +56,7 @@ Change `/home/pi` if the project is installed under a different username.
 Cricbuzz may change its page layout or restrict automated requests. NewsAPI.ai also applies token and rate limits to API requests, so use the News tab's refresh button only when needed.
 
 Cricbuzz may change its page layout or restrict automated requests. The application catches request failures and displays an error instead of closing. The supplied scripts were refactored so that network requests occur only when a user refreshes a screen, and the Tkinter interface remains responsive while data is being fetched.
+
+## Windows portable executable
+
+A Windows build is produced by GitHub Actions as a portable ZIP containing `CricketScores.exe`, a NewsAPI.ai configuration template, and Windows instructions. It is designed to run from a user-writable folder without administrator permission: it does not install into Program Files, create a service, or write registry entries. The generated workflow artifact is available from the repository's Actions run after the Windows build completes.

@@ -8,6 +8,7 @@ from __future__ import annotations
 import html
 import os
 import queue
+from pathlib import Path
 import threading
 import tkinter as tk
 from tkinter import messagebox, ttk
@@ -21,6 +22,24 @@ SCHEDULE_URL = "https://www.cricbuzz.com/cricket-schedule/upcoming-series/intern
 NEWS_URL = "https://eventregistry.org/api/v1/article/getArticles"
 HEADERS = {"User-Agent": "Mozilla/5.0 (Raspberry Pi Cricket Scoreboard)"}
 TIMEOUT = 15
+
+
+def load_local_env() -> None:
+    """Load NEWSAPI_AI_KEY from newsapi.env beside the app when available."""
+    candidates = [Path(__file__).resolve().parent / "newsapi.env", Path.cwd() / "newsapi.env"]
+    for path in candidates:
+        if not path.exists():
+            continue
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('\\\"').strip("'"))
+        break
+
+
+load_local_env()
 
 
 def get_soup(url: str) -> BeautifulSoup:
